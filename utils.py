@@ -4,12 +4,12 @@ import os
 from pathlib import Path
 
 
-def if_dir_exists(filepath):
+def dir_exists(filepath):
     file_ = Path(filepath)
     return file_.is_dir()
 
 
-def if_file_exists(filepath):
+def file_exists(filepath):
     my_file = Path(filepath)
     return my_file.is_file()
 
@@ -47,7 +47,7 @@ def get_name_from_url_no_ext(url):
 
 
 def clone_repo(git_url, repo_dir):
-    if not if_dir_exists(repo_dir):
+    if not dir_exists(repo_dir):
         print("Cloning repository {}".format(git_url))
         Repo.clone_from(git_url, repo_dir)
     else:
@@ -59,7 +59,7 @@ def clone_repo(git_url, repo_dir):
 
 def build_path(levels):
     path = os.path.join(*levels)
-    if not if_dir_exists(path):
+    if not dir_exists(path):
         os.makedirs(path)
     return path
 

@@ -19,17 +19,15 @@ from ricecooker.chefs import JsonTreeChef
 from ricecooker.utils import downloader, html_writer
 from ricecooker.utils.caching import CacheForeverHeuristic, FileCache, CacheControlAdapter
 from ricecooker.utils.jsontrees import write_tree_to_json_tree, SUBTITLES_FILE
+from pressurecooker.youtube import YouTubeResource
 import time
 from urllib.error import URLError
 from urllib.parse import urljoin
-from utils import if_dir_exists, get_name_from_url, clone_repo, build_path
-from utils import if_file_exists, get_video_resolution_format, remove_links
+from utils import dir_exists, get_name_from_url, clone_repo, build_path
+from utils import file_exists, get_video_resolution_format, remove_links
 from utils import get_name_from_url_no_ext, get_node_from_channel, get_level_map
 from utils import remove_iframes, get_confirm_token, save_response_content
 import youtube_dl
-
-
-BASE_URL = "https://www.youtube.com/user/kkudl/playlists"
 
 DATA_DIR = "chefdata"
 COPYRIGHT_HOLDER = "Ahmad Al-Hout"
@@ -46,11 +44,6 @@ DOWNLOAD_VIDEOS = True
 LOAD_VIDEO_LIST = False
 
 sess = requests.Session()
-cache = FileCache('.webcache')
-basic_adapter = CacheControlAdapter(cache=cache)
-forever_adapter = CacheControlAdapter(heuristic=CacheForeverHeuristic(), cache=cache)
-sess.mount('http://', basic_adapter)
-sess.mount(BASE_URL, forever_adapter)
 
 # Run constants
 ################################################################################
@@ -198,7 +191,7 @@ class Subject(Node):
 
     def auto_generate_lessons(self, urls):
         for url in urls:
-            youtube = YouTubeResource(url)
+            youtube = YouTubeResourceNode(url)
             for title, url in youtube.playlist_name_links():
                 lesson = Lesson(title=title, source_id=url, lang=self.lang)
                 self.lessons.append(lesson)
@@ -207,7 +200,7 @@ class Subject(Node):
 class Lesson(Node):
 
     def download(self, download=True, base_path=None):
-        youtube = YouTubeResource(self.source_id, lang=self.lang)
+        youtube = YouTubeResourceNode(self.source_id, lang=self.lang)
         youtube.download(download, base_path)
         #youtube.title = remove_special_case(remove_units_number(youtube.title))
         self.add_node(youtube)
@@ -229,9 +222,14 @@ class Lesson(Node):
             )
 
 
-class YouTubeResource(object):
+class YouTubeResourceNode(YouTubeResource):
     def __init__(self, source_id, name=None, type_name="Youtube", lang="ar", 
             embeded=False, section_title=None):
+        if embeded is True:
+            self.source_id = YouTubeResourceNode.transform_embed(source_id)
+        else:
+            self.source_id = self.clean_url(source_id)
+        super(YouTubeResourceNode, self).__init__(source_id)
         LOGGER.info("    + Resource Type: {}".format(type_name))
         LOGGER.info("    - URL: {}".format(source_id))
         self.filename = None
@@ -239,10 +237,6 @@ class YouTubeResource(object):
         self.filepath = None
         self.name = name
         self.section_title = section_title
-        if embeded is True:
-            self.source_id = YouTubeResource.transform_embed(source_id)
-        else:
-            self.source_id = self.clean_url(source_id)
         self.file_format = file_formats.MP4
         self.lang = lang
         self.is_valid = False
@@ -254,14 +248,11 @@ class YouTubeResource(object):
 
     @property
     def title(self):
-        return self.name if self.name is not None else self.filename
+        return self.name
 
     @title.setter
     def title(self, v):
-        if self.name is not None:
-            self.name = v
-        else:
-            self.filename = v
+        self.name = v
 
     @classmethod
     def is_youtube(self, url, get_channel=False):
@@ -306,46 +297,21 @@ class YouTubeResource(object):
         base_path = build_path([DATA_DIR, CHANNEL_SOURCE_ID])
         videos_url_path = os.path.join(base_path, "{}.json".format(source_id_hash))
 
-        if if_file_exists(videos_url_path) and LOAD_VIDEO_LIST is True:
+        if file_exists(videos_url_path) and LOAD_VIDEO_LIST is True:
             with open(videos_url_path, "r") as f:
                 name_url = json.load(f)
         else:
             for url in self.playlist_links():
-                youtube = YouTubeResource(url)
-                info = youtube.get_video_info(None, False)
+                youtube = YouTubeResourceNode(url)
+                info = youtube.get_resource_info()
                 name_url.append((info["title"], url))
             with open(videos_url_path, "w") as f:
                 json.dump(name_url, f)
         return name_url
 
-    def get_video_info(self, download_to=None, subtitles=True):
-        ydl_options = {
-                'writesubtitles': subtitles,
-                'allsubtitles': subtitles,
-                'no_warnings': True,
-                'restrictfilenames':True,
-                'continuedl': True,
-                'quiet': False,
-                'format': "bestvideo[height<={maxheight}][ext=mp4]+bestaudio[ext=m4a]/best[height<={maxheight}][ext=mp4]".format(maxheight='480'),
-                'outtmpl': '{}/%(id)s'.format(download_to),
-                'noplaylist': True
-            }
-
-        with youtube_dl.YoutubeDL(ydl_options) as ydl:
-            try:
-                ydl.add_default_info_extractors()
-                info = ydl.extract_info(self.source_id, download=(download_to is not None))
-                return info
-            except(youtube_dl.utils.DownloadError, youtube_dl.utils.ContentTooShortError,
-                    youtube_dl.utils.ExtractorError) as e:
-                LOGGER.info('An error occured ' + str(e))
-                LOGGER.info(self.source_id)
-            except KeyError as e:
-                LOGGER.info(str(e))
-
     def subtitles_dict(self):
         subs = []
-        video_info = self.get_video_info()
+        video_info = self.get_resource_subtitles()
         if video_info is not None:
             video_id = video_info["id"]
             if 'subtitles' in video_info:
@@ -355,33 +321,9 @@ class YouTubeResource(object):
         return subs
 
     def download(self, download=True, base_path=None):
-        if not "watch?" in self.source_id or "/user/" in self.source_id or\
-            download is False:
-            return
-
-        download_to = build_path([base_path, 'videos'])
-        for i in range(4):
-            try:
-                info = self.get_video_info(download_to=download_to, subtitles=False)
-                if info is not None:
-                    LOGGER.info("    + Video resolution: {}x{}".format(info.get("width", ""), info.get("height", "")))
-                    self.filepath = os.path.join(download_to, "{}.mp4".format(info["id"]))
-                    self.filename = info["title"]
-                    if self.filepath is not None and os.stat(self.filepath).st_size == 0:
-                        LOGGER.info("    + Empty file")
-                        self.filepath = None
-            except (ValueError, IOError, OSError, URLError, ConnectionResetError) as e:
-                LOGGER.info(e)
-                LOGGER.info("Download retry")
-                time.sleep(.8)
-            except (youtube_dl.utils.DownloadError, youtube_dl.utils.ContentTooShortError,
-                    youtube_dl.utils.ExtractorError, OSError) as e:
-                LOGGER.info("     + An error ocurred, may be the video is not available.")
-                return
-            except OSError:
-                return
-            else:
-                return
+        info = super(YouTubeResourceNode, self).download(base_path=base_path)
+        self.filepath = info["filename"]
+        self.title = info["title"]
 
     def to_node(self):
         if self.filepath is not None:
@@ -403,7 +345,6 @@ class YouTubeResource(object):
 # The chef subclass
 ################################################################################
 class ScienceAhmedChef(JsonTreeChef):
-    HOSTNAME = BASE_URL
     TREES_DATA_DIR = os.path.join(DATA_DIR, 'trees')
 
     def __init__(self):
@@ -420,7 +361,7 @@ class ScienceAhmedChef(JsonTreeChef):
         CHANNEL_NAME = "Sciences for Middle School Learners with Mr. Ahmad Al-Hoot (العربيّة)"
         CHANNEL_SOURCE_ID = "sushi-chef-science-ahmed-al-hoot-ar"
         channel_tree = dict(
-                source_domain=ScienceAhmedChef.HOSTNAME,
+                source_domain=CHANNEL_DOMAIN,
                 source_id=CHANNEL_SOURCE_ID,
                 title=CHANNEL_NAME,
                 description="""Mr. Ahmad Al-Hoot from Egypt provides 13-16 year old learners with video lessons covered in several national curricula across the region in chemistry, biology and geology."""
