@@ -57,75 +57,14 @@ CHANNEL_THUMBNAIL = "https://yt3.ggpht.com/a-/AN66SAyssjwwB4_RZHwCrkOd4hHtZYf9pD
 # Additional constants
 ################################################################################
 
-def title_has_numeration(title):
-    unit_name_ar = ["الوحده", "الوحدة"]
-    for unit_name in unit_name_ar:
-        if unit_name in title:
-            index = title.find(unit_name)
-            match = re.search("(?P<int>\d+)", title)
-            if match:
-                num = int(match.group("int"))
-                return title[index: index+len(unit_name)] + " " + str(num), num
-            else:
-                return title[index: index+len(unit_name)], None 
-    
-    numbers = list(map(str, [1,2,3,4,5,6,7,8,9]))
-    arab_nums = ["١", "٢", "٣", "٤", "٥"]
-    title = title.replace("-", " ")
-    for elem in title.split(" "):
-        elem = elem.strip()
-        for num in numbers:
-            if elem == num:
-                return title.replace(elem, "").strip(), int(num)
-    
-    for arab_num in title:
-        index = title.find(arab_num)
-        if index != -1 and index >= len(title) - 1:
-            return title.replace(arab_num, "").strip(), 1
-    
-    return False, None
 
-
-def title_patterns(title):
-    title = re.sub(' +', ' ' , title)
-    pattern01 = r"\d+\-\d+"
-    match = re.search(pattern01, title)
-    if match:
-        index = match.span()
-        numbers = title[index[0]:index[1]]
-        number_unit = numbers.split("-")[0].strip()
-        return "Unit {}".format(number_unit), int(number_unit)
-    
-    pattern02 = r"\d+\s+\d+"
-    match = re.search(pattern02, title)
-    if match:
-        index = match.span()
-        numbers = title[index[0]:index[1]]
-        number_unit = int(title[index[1]:].strip())
-        return "Unit {}".format(number), number_unit
-    
-    title_unit, unit_num = title_has_numeration(title)
-    if title_unit is not False and unit_num is not None:
-        return title_unit, unit_num
-    elif title_unit is not False and unit_num is None:
-        return title_unit, 1
-    else:
-        return title, 1
-
-
-def remove_units_number(title):
-    match = re.search(r'\|.*\|', title)
-    if match:
-        index = match.span()
-        new_title = "{} | {}".format(title[:index[0]].strip(), title[index[1]:].strip())
-        return new_title.strip()
+def title_remove_strings(title):
+    remove_strings = ["2018", "الترم التاني", "الترم الاول", "ترم اول"]
+    for string in remove_strings:
+        print("A******", title)
+        title = title.replace(string, "")
+        print("B******", title)
     return title
-
-
-def remove_special_case(title):
-    title = title.replace("مهارات في علم الرياضيات", "")
-    title = title.replace("-", "")
-    return title.strip()
 
 
 class Node(object):
@@ -202,7 +141,7 @@ class Lesson(Node):
     def download(self, download=True, base_path=None):
         youtube = YouTubeResourceNode(self.source_id, lang=self.lang)
         youtube.download(download, base_path)
-        #youtube.title = remove_special_case(remove_units_number(youtube.title))
+        youtube.title = title_remove_strings(youtube.title)
         self.add_node(youtube)
 
     def to_node(self):
