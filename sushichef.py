@@ -61,9 +61,7 @@ CHANNEL_THUMBNAIL = "https://yt3.ggpht.com/a-/AN66SAyssjwwB4_RZHwCrkOd4hHtZYf9pD
 def title_remove_strings(title):
     remove_strings = ["2018", "الترم التاني", "الترم الاول", "ترم اول"]
     for string in remove_strings:
-        print("A******", title)
         title = title.replace(string, "")
-        print("B******", title)
     return title
 
 
