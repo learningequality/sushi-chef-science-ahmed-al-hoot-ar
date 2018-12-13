@@ -295,7 +295,7 @@ class ScienceAhmedChef(JsonTreeChef):
     def lessons(self):
         global CHANNEL_SOURCE_ID
         self.RICECOOKER_JSON_TREE = 'ricecooker_json_tree_professional.json'
-        CHANNEL_NAME = "Sciences for Middle School Learners with Mr. Ahmad Al-Hoot (العربيّة)"
+        CHANNEL_NAME = "Sciences for Lower Secondary Learners (العربيّة)"
         CHANNEL_SOURCE_ID = "sushi-chef-science-ahmed-al-hoot-ar"
         channel_tree = dict(
                 source_domain=CHANNEL_DOMAIN,
