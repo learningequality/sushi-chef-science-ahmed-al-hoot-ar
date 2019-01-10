@@ -1,0 +1,4 @@
+le_utils>=0.1.4
+ricecooker>=0.6.11
+markdown2==2.3.5
+GitPython==2.1.9
