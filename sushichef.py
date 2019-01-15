@@ -301,7 +301,9 @@ class ScienceAhmedChef(JsonTreeChef):
                 source_domain=CHANNEL_DOMAIN,
                 source_id=CHANNEL_SOURCE_ID,
                 title=CHANNEL_NAME,
-                description="""Mr. Ahmad Al-Hoot from Egypt provides 13-16 year old learners with video lessons covered in several national curricula across the region in chemistry, biology and geology."""
+                description="""
+يقدّم الأستاذ أحمد الحوت من مصر شروحات لدروس في مادة الكيمياء والفيزياء والأحياء وعلوم الأرض للمرحلة العمرية من 13-16 سنة والتي يتم تدريسها بشكل واسع في المناهج المدرسية في كثير من دول المنطقة.
+"""
 [:400], #400 UPPER LIMIT characters allowed 
                 thumbnail=CHANNEL_THUMBNAIL,
                 author=AUTHOR,
