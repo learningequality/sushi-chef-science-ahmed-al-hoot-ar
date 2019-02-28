@@ -1,0 +1,58 @@
+[
+    {"title": "الأول الإعدادي", "source_id": "الأول الإعدادي", 
+    "subjects": [
+        {"title": "الفيزياء", "source_id": "الفيزياء",
+        "lessons": ["https://www.youtube.com/watch?v=b3Usd5eLM1Y&list=PL25pNP-Lpva1_z9gB-mwadRJSgBaZA9Rs",   
+                    "https://www.youtube.com/watch?v=mvIwy4W1u_4&list=PL25pNP-Lpva0810IJgo0oAxX-ZNOVlyRl"], 
+        "lang": "ar"
+        }, 
+        {"title": "الكيمياء", "source_id": "الكيمياء",
+        "lessons": ["https://www.youtube.com/watch?v=5k1ggADRmxU&list=PL25pNP-Lpva22js9AvOGMnwoVdwjFV4DJ", 
+                    "https://www.youtube.com/watch?v=tfOMs-nzlco&list=PL25pNP-Lpva388LEXjHLBJPv102wG5lUb"],
+        "lang": "ar"
+        },
+        {"title": "الأحياء وعلوم الأرض", "source_id": "الأحياء وعلوم الأرض",
+        "lessons": ["https://www.youtube.com/watch?v=6KPCr7-4CCM&list=PL25pNP-Lpva26vrtquNNvm4h_5Ob19-WQ",
+                    "https://www.youtube.com/watch?v=gA9fTGIIU34&list=PL25pNP-Lpva37uUhRDKSOlmutSekHEN6P"],
+        "lang": "ar"
+        }
+    ]},
+    {"title": "الثاني الإعدادي", "source_id": "الثاني الإعدادي", 
+    "subjects": [
+        {"title": "الفيزياء", "source_id": "الفيزياء",
+        "lessons": ["https://www.youtube.com/watch?v=UvIYKWGcVog&list=PL25pNP-Lpva1FpDCY20kcobQU05ztc7BD",   
+                    "https://www.youtube.com/watch?v=iQ48Tv_VK6g&list=PL25pNP-Lpva3igUslsxVzzSv9V9rePwXw"], 
+        "lang": "ar"
+        }, 
+        {"title": "الكيمياء", "source_id": "الكيمياء", 
+        "lessons": ["https://www.youtube.com/watch?v=o2nCiwpe6j4&list=PL25pNP-Lpva3O4Ne1CgRh_zJ4qO1W5XvJ"],
+        "lang": "ar"
+        },
+        {"title": "الأحياء وعلوم الأرض", "source_id": "الأحياء وعلوم الأرض",
+        "lessons": ["https://www.youtube.com/watch?v=8ZWLnOytqDs&list=PL25pNP-Lpva3YovYYDnDoiX9oXuwt8hgq",
+                    "https://www.youtube.com/watch?v=zZFLxrPKUPc&list=PL25pNP-Lpva0Ubvdi8kPDiRtyUinv3psQ",
+                    "https://www.youtube.com/watch?v=w3DY3Fu0akw&list=PL25pNP-Lpva07fi2JrJ_M-A2Tf3f7p6tJ"],
+        "lang": "ar"
+        }
+    ]},
+    {"title": "الثالث الإعدادي", "source_id": "الثالث الإعدادي", 
+    "subjects": [
+        {"title": "الفيزياء", "source_id": "الفيزياء", 
+        "lessons": ["https://www.youtube.com/watch?v=q5Xh4nJWzJw&list=PL25pNP-Lpva2JdjYop5es8sRYoj135Lw8",   
+                    "https://www.youtube.com/watch?v=fY7JotplznA&list=PL25pNP-Lpva3V6bpZO_fk-5P_UVF2muij",
+                    "https://www.youtube.com/watch?v=M7WtMJMgY0Y&list=PL25pNP-Lpva3ZzFGe_30ZftecjqnqV3ES"], 
+        "lang": "ar"
+        }, 
+        {"title": "الكيمياء", "source_id": "الكيمياء",
+        "lessons": ["https://www.youtube.com/watch?v=jerN85KXSCw&list=PL25pNP-Lpva16fgnoLmsLfnhUW5_PpFUY"],
+        "lang": "ar"
+        },
+        {"title": "الأحياء وعلوم الأرض", "source_id": "الأحياء وعلوم الأرض",
+        "lessons": ["https://www.youtube.com/watch?v=w-rscOYDENM&list=PL25pNP-Lpva11COf_QcCUfNZBuyOdjRKH",
+                    "https://www.youtube.com/watch?v=hpjQy09E4p4&list=PL25pNP-Lpva3WQXS01vEqk8D_A7od7BId",
+                    "https://www.youtube.com/watch?v=ms8mn4BJHVs&list=PL25pNP-Lpva2QAthRarnbm0LNcPaRCKlh",
+                    "https://www.youtube.com/watch?v=gu4PgPZaxd4&list=PL25pNP-Lpva2CL7FvamqBGotaMrH_Df9G"],
+        "lang": "ar"
+        }
+    ]}
+]
